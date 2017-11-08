@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 #  Ua2En.py
@@ -20,31 +19,68 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
 
 from DictionsMods import *
+from tkinter import *
+import sys
 
-def Ua2En(S, d):
-    '''
-    транслітерація параметра-рядка (S) згідно з параметром-словником (d)
-    '''
-    Rez=""
-    for i in S:
-        try:
-            if i.isupper():
-                Rez=Rez+d[i.lower()].upper()
-            else:
-                Rez=Rez+d[i.lower()]
-        except:
-            Rez=Rez+i
-    return Rez
+class Application(Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.grid()
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.LName=Label(self, text="Транслітерація тексту...")
+        self.LName.grid(row=0, column=0, columnspan=9)
+        
+        self.LVersion=Label(self, text="Версія 1.0")
+        self.LVersion.grid(row=1, column=0, columnspan=9)
+        
+        self.LUa=Label(self, text="Український текст:")
+        self.LUa.grid(row=2, column=1)
+        
+        self.UaTxt=Text(self, width=25, height=10, wrap=WORD)
+        self.UaTxt.grid(row=3, column=1)
+        
+        self.BTrans=Button(self, text="-->\nПерекласти...", command=self.Ua2En, cursor="hand2")
+        self.BTrans.grid(row=3, column=2)
+        
+        self.LUa=Label(self, text="Транслітерований текст:")
+        self.LUa.grid(row=2, column=4)
+        
+        self.EnTxt=Text(self, width=25, height=10, wrap=WORD)
+        self.EnTxt.grid(row=3, column=4)
+        
+        self.BExit=Button(self, text="Вихід", command=quit, cursor="hand2")
+        self.BExit.grid(column=1)
+        
+    def quit(self):
+        sys.exit()
 
 
-def main(args):
-    inp=input("Введіть рядок для транлітерації: ")
-    print(Ua2En(inp, USA_dic))
-    return 0
+    def Ua2En(self):
+        '''
+        транслітерація параметра-рядка (S) згідно з параметром-словником (d)
+        '''
+        S=self.UaTxt.get(0.0, END)
+        #print(S)
+        d=USA_dic
+        Rez=""
+        for i in S:
+            try:
+                if i.isupper():
+                    Rez=Rez+d[i.lower()].upper()
+                else:
+                    Rez=Rez+d[i.lower()]
+            except:
+                Rez=Rez+i
+        self.EnTxt.delete(0.0,END)
+        self.EnTxt.insert(0.0,Rez)
 
-if __name__ == '__main__':
-    import sys
-    sys.exit(main(sys.argv))
+
+root=Tk()
+root.title("Транслітератор Ua2En")
+root.geometry("480x250")
+app=Application(root)
+root.mainloop()
